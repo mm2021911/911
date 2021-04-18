@@ -167,38 +167,11 @@ class DualGNN(torch.nn.Module):
             mask_dropt.extend(temp_false) if idx in self.dropt_node_idx else mask_dropt.extend(temp_true)
 
         edge_index = edge_index[np.lexsort(edge_index.T[1, None])]
-        # pdb.set_trace()
-        # self.node_va = list(set(self.dropv_node_idx.tolist()).difference(set(self.dropa_node_idx.tolist())))
-        # self.node_vt = list(set(self.dropv_node_idx.tolist()).difference(set(self.dropt_node_idx.tolist())))
-        # self.node_av = list(set(self.dropa_node_idx.tolist()).difference(set(self.dropv_node_idx.tolist())))
-        # self.node_at = list(set(self.dropa_node_idx.tolist()).difference(set(self.dropt_node_idx.tolist())))
-        # self.node_tv = list(set(self.dropt_node_idx.tolist()).difference(set(self.dropv_node_idx.tolist())))
-        # self.node_ta = list(set(self.dropt_node_idx.tolist()).difference(set(self.dropa_node_idx.tolist())))
-
-        # self.mlp_va = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-        # self.mlp_vt = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-        # self.mlp_av = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-        # self.mlp_at = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-        # self.mlp_tv = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-        # self.mlp_ta = nn.Linear(self.dim_feat, self.dim_feat, bias=False)
-
-
 
         edge_index_dropv = edge_index[mask_dropv]
         edge_index_dropa = edge_index[mask_dropa]
         edge_index_dropt = edge_index[mask_dropt]
 
-        # union = set(tuple(t) for t in asdsa+asdsd)
-        # pdb.set_trace()
-        # [[   14 55485]
-        #  [   15 55485]
-        #  [   18 55485]
-        #  ...
-        #  [26180 61470]
-        #  [50143 61470]
-        #  [52399 61470]]
-        # ============================================================================
-        # 避免排序报错，在后面在进行这个类型转换
         self.edge_index_dropv = torch.tensor(edge_index_dropv).t().contiguous().to(self.device)
         self.edge_index_dropa = torch.tensor(edge_index_dropa).t().contiguous().to(self.device)
         self.edge_index_dropt = torch.tensor(edge_index_dropt).t().contiguous().to(self.device)
@@ -278,18 +251,6 @@ class DualGNN(torch.nn.Module):
         # edge_index, _ = dropout_adj(self.edge_index, edge_attr=None, p=self.dropout)
         if self.dataset == 'tiktok' or self.dataset=='tiktok_new':
             self.t_feat = scatter_('mean',self.word_embedding(self.word_tensor[1]),self.word_tensor[0]).to(self.device)
-            # self.t_feat[self.dropt_node_idx] =  self.t_drop_ze
-        # pdb.set_trace()
-        # self.v_feat[self.node_va] = self.a_feat[self.node_va]
-        # self.v_feat[self.node_vt] = self.t_feat[self.node_vt]
-        # self.a_feat[self.node_av] = self.v_feat[self.node_av]
-        # self.a_feat[self.node_at] = self.t_feat[self.node_at]
-        # self.t_feat[self.node_tv] = self.v_feat[self.node_tv]
-        # self.t_feat[self.node_ta] = self.a_feat[self.node_ta]
-
-        # self.v_feat[self.dropv_node_idx] = (self.a_feat[self.dropv_node_idx]+self.t_feat[self.dropv_node_idx].detach().clone())/2
-        # self.a_feat[self.dropa_node_idx] = (self.v_feat[self.dropa_node_idx]+self.t_feat[self.dropa_node_idx].detach().clone())/2
-        # self.t_feat[self.dropt_node_idx] = (self.v_feat[self.dropt_node_idx]+self.a_feat[self.dropt_node_idx])/2
 
 
         self.v_rep, self.v_preference = self.v_gcn(self.edge_index_dropv,self.edge_index,self.v_feat)
@@ -298,35 +259,6 @@ class DualGNN(torch.nn.Module):
         # ########################################### multi-modal information construction
         representation = self.v_rep+self.a_rep+self.t_rep
         
-        # pdb.set_trace()
-        # v_proxy = self.MLP_v(self.v_rep.detach().clone())
-        # a_proxy = self.MLP_a(self.a_rep.detach().clone())
-        # t_proxy = self.MLP_t(self.t_rep.detach().clone())
-
-        # v_std = torch.std(self.v_rep,dim=1)
-        # a_std = torch.std(self.a_rep,dim=1)
-        # t_std = torch.std(self.t_rep,dim=1)
-        # self.cov_u_p = torch.zeros([self.num_user+self.num_item,3])
-        # cov_u = torch.cat((self.v_rep.unsqueeze(2),self.a_rep.unsqueeze(2),self.t_rep.unsqueeze(2)),dim=2).transpose(2,1)
-        # cov_u = cov_u-cov_u.mean(dim=2).unsqueeze(2)
-        # cov_u = torch.matmul(cov_u,cov_u.transpose(1,2))/(self.dim_latent -1)
-        # self.cov_u_p[:,0] = cov_u[:,0,1]/(v_std*a_std)
-        # self.cov_u_p[:,1] = cov_u[:,0,2]/(v_std*t_std)
-        # self.cov_u_p[:,2] = cov_u[:,1,2]/(a_std*t_std)
-        # cov_p_abs = torch.max(self.cov_u_p,dim=1).values-torch.min(self.cov_u_p,dim=1).values
-        # weak_modalindex = torch.where(cov_p_abs>(torch.max(cov_p_abs)-torch.min(cov_p_abs))/3)[0]
-        # weak_modalindex_indices = self.cov_u_p[weak_modalindex].min(dim=1).indices
-        # weak_modalindex_indices_t = torch.where(weak_modalindex_indices==0)
-        # weak_modalindex_indices_a = torch.where(weak_modalindex_indices==1)
-        # weak_modalindex_indices_v = torch.where(weak_modalindex_indices==2)
-        # proxy_index_t = weak_modalindex[weak_modalindex_indices_t]
-        # proxy_index_a = weak_modalindex[weak_modalindex_indices_a]
-        # proxy_index_v = weak_modalindex[weak_modalindex_indices_v]
-
-        # self.t_rep[proxy_index_t] = ((v_proxy[proxy_index_t]+a_proxy[proxy_index_t])/2+self.t_rep[proxy_index_t])/2
-        # self.a_rep[proxy_index_a] = ((v_proxy[proxy_index_a]+a_proxy[proxy_index_a])/2+self.a_rep[proxy_index_a])/2
-        # self.v_rep[proxy_index_v] = ((v_proxy[proxy_index_v]+a_proxy[proxy_index_v])/2+self.v_rep[proxy_index_v])/2
-
         # pdb.set_trace()
         if self.construction == 'weighted_sum':
             self.v_rep = torch.unsqueeze(self.v_rep, 2)
@@ -337,10 +269,6 @@ class DualGNN(torch.nn.Module):
                 self.weight_u)
             user_rep = torch.squeeze(user_rep)
 
-            # item_rep = torch.matmul(
-            #     torch.cat((self.v_rep[self.num_user:], self.a_rep[self.num_user:], self.t_rep[self.num_user:]), dim=2),
-            #     self.weight_i)
-            # item_rep = torch.squeeze(item_rep)
         if self.construction == 'mean':
             user_rep = (self.v_rep[:self.num_user]+self.a_rep[:self.num_user]+self.t_rep[:self.num_user])/3
         if self.construction == 'max':
@@ -364,20 +292,10 @@ class DualGNN(torch.nn.Module):
             user_rep = torch.cat((user_rep[:,:,0], user_rep[:,:,1], user_rep[:,:,2]), dim=1)
             user_rep = self.MLP_user(user_rep)
         item_rep = representation[self.num_user:]
-        # user_rep = representation[:self.num_user]
-        # user_rep = representation[:self.num_user]
         ############################################ multi-modal information aggregation
         h_u1 = self.user_graph(user_rep,user_graph,user_weight_matrix)
-        #h_u2 = self.user_graph(h_u1,user_graph,user_weight_matrix)
-        #h_u3 = self.user_graph(h_u2,user_graph,user_weight_matrix)
         user_rep = user_rep + h_u1 
-        # user_rep = self.MLP_user(torch.cat((user_rep,h_u1),dim=1)) 
-        # loss_cons = self.loss_constra(user_rep,user_graph,user_weight_matrix)
         self.result_embed = torch.cat((user_rep, item_rep), dim=0)
-        # pdb.set_trace()
-        # self.result_embed = representation
-        # loss_constra = self.loss_constra(user_rep,user_graph,user_weight_matrix,user_cons)
-        # pdb.set_trace()
         user_tensor = self.result_embed[user_nodes]
         pos_item_tensor = self.result_embed[pos_item_nodes]
         neg_item_tensor = self.result_embed[neg_item_nodes]
@@ -411,10 +329,6 @@ class DualGNN(torch.nn.Module):
     def gene_ranklist(self,val_data,test_data,step=20000, topk=10):
         user_tensor = self.result_embed[:self.num_user].cpu()
         item_tensor = self.result_embed[self.num_user:self.num_user+self.num_item].cpu()
-        # item_tensor_cold = (self.v_gcn.MLP(self.v_feat[self.num_item:]) + self.a_gcn.MLP(self.a_feat[self.num_item:]) + self.t_gcn.MLP(self.t_feat[self.num_item:]))
-        # item_tensor = torch.cat([item_tensor,item_tensor_cold.cpu()])
-        # pdb.set_trace()
-
         start_index = 0
         end_index = self.num_user if step == None else step
 
@@ -471,9 +385,6 @@ class DualGNN(torch.nn.Module):
         user_tensor = self.result_embed[:self.num_user].cpu()
         item_tensor = self.result_embed[self.num_user:].cpu()
         item_tensor_cold = item_tensor[self.num_item:]#把冷启动商品找出来
-        # item_tensor_cold = (self.v_gcn.MLP(self.v_feat[self.num_item:]) + self.a_gcn.MLP(self.a_feat[self.num_item:]) + self.t_gcn.MLP(self.t_feat[self.num_item:]))
-        # item_tensor = torch.cat([item_tensor,item_tensor_cold.cpu()])
-        # pdb.set_trace()
         
         start_index = 0
         end_index = self.num_user if step == None else step
