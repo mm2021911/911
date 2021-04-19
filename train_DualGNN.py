@@ -12,11 +12,11 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from DataLoad import MyDataset
 from Model import DualGNN
-from lightgcn import LightGCN
-from LRGCCF import LRGCCF
+from Model_LightGCN import LightGCN
+from Model_LRGCCF import LRGCCF
 from Model_MMGCN import MMGCN
 from model_VBPR import VBPR_net
-from Model_stargcn import Stargcn
+from Model_STARGCN import Stargcn
 from evaluation import test_eval
 from evaluation import train_eval
 from parse import parse_args
@@ -118,15 +118,8 @@ class Net:
             self.num_user = 55485
             self.num_item = 5986
         elif self.dataset =='tiktok':
-            self.num_user = 36656
-            self.num_item = 76085
-        elif self.dataset =='tiktok_new':
             self.num_user = 32309
             self.num_item = 66456
-        elif self.dataset =='cold_movie':
-            self.num_user = 55485
-            self.num_item = 5986
-            self.num_cold_item = 867
         print('Data loading ...')
         self.train_dataset = MyDataset('../Data/'+self.dataset+'/', self.num_user, self.num_item,self.dataset,self.model_name)
         path = '../Data/'+self.dataset+'/'
@@ -146,7 +139,7 @@ class Net:
             # self.training_item_set = np.load('../Data/Movielens/item_user_dict_lr.npy', allow_pickle=True).item()
             # self.item_user_dict = np.load('./Data/Movielens/item_user_dict.npy', allow_pickle=True).item()
             # self.final_embed = torch.load('./Data/Movielens/movielens_final_emb.pt')
-        elif args.dataset == 'tiktok_new':
+        elif args.dataset == 'Tiktok':
             self.edge_index = np.load('../Data/tiktok_new/train_tik.npy')
             # pdb.set_trace()
             self.sparse_graph = sparse_graph
@@ -369,7 +362,7 @@ class Net:
         # pdb.set_trace()
         return user_graph_index, user_weight_matrix
 if __name__ == '__main__':
-    if args.dataset == 'tiktok_new':
+    if args.dataset == 'Tiktok':
         # sparse_graph = torch.load('../Data/tiktok_new/graph.pt')
         sparse_graph=None
     elif args.dataset == 'Movielens':

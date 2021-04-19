@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--num_layer', type=int, default=1, help='Layer number.')
     parser.add_argument('--has_id', type=bool, default=True, help='Has id_embedding')
     parser.add_argument('--device', type=int, default=0, help='cuda devices')
-    parser.add_argument('--dataset', default='tiktok_new', help='Dataset path')
+    parser.add_argument('--dataset', default='Tiktok', help='Dataset path')
     parser.add_argument('--varient', default='random', help='model varient')
     parser.add_argument('--sampling', type=int, default=40, help='user co-occurance number')
     parser.add_argument('--traces', type=int, default=2, help='number of traces')

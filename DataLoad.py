@@ -9,14 +9,8 @@ class MyDataset(Dataset):
 		
 		if dataset == 'Movielens':
 			self.data = np.load(path+'train.npy')
-			self.adj_lists = np.load(path + 'final_adj_dict.npy', allow_pickle=True).item()
-		if dataset == 'cold_movie':
-			self.data = np.load(path+'final_cold_movie_train.npy')
-			self.adj_lists = np.load(path + 'user_item_dict_cold_mov.npy', allow_pickle=True).item()
-		elif dataset =='tiktok':
-			self.data = np.load(path+'train.npy')
-			self.adj_lists = np.load(path+'adj.npy',allow_pickle=True).item()
-		elif dataset =='tiktok_new':
+			self.adj_lists = np.load(path + 'user_item_dict_mov.npy', allow_pickle=True).item()
+		elif dataset =='Tiktok':
 			self.data = np.load(path+'train_tik.npy')
 			self.adj_lists = np.load(path+'user_item_dict_tik.npy',allow_pickle=True).item()
 		# self.user_item_dict = np.load(path+'user_item_dict.npy', allow_pickle=True).item()

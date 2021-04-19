@@ -195,7 +195,7 @@ class MMGCN(torch.nn.Module):
             
             self.t_gcn = GCN(self.edge_index, batch_size, num_user, num_item, self.t_feat.size(1), dim_x, self.aggr_mode, self.concate, num_layer=num_layer, has_id=has_id,device=self.device)
             self.num_modal += 1
-        if self.dataset =='tiktok_new':
+        if self.dataset =='Tiktok':
             self.v_drop_ze = torch.zeros(len(self.dropv_node_idx),128).to(self.device)
             self.a_drop_ze = torch.zeros(len(self.dropa_node_idx),128).to(self.device)
             self.t_drop_ze = torch.zeros(len(self.dropt_node_idx),128).to(self.device)
@@ -215,7 +215,7 @@ class MMGCN(torch.nn.Module):
         # pdb.set_trace()
         v_rep = self.v_gcn(self.v_feat, self.id_embedding)
         a_rep = self.a_gcn(self.a_feat, self.id_embedding)
-        if self.dataset == 'tiktok_new':
+        if self.dataset == 'Tiktok':
             self.t_feat = torch.tensor(scatter_('mean', self.word_embedding(self.words_tensor[1]), self.words_tensor[0])).to(self.device)
             self.t_feat[self.dropt_node_idx] =  self.t_drop_ze
             t_rep = self.t_gcn(self.t_feat, self.id_embedding)

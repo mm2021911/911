@@ -351,7 +351,7 @@ def full_data_gen(dir_str):
     np.save(dir_str+'/test_full.npy', np.array(test_full_list))
 
 if __name__ == 	'__main__':    
-    train_data = np.load('./edge_index_cold_tiktok.npy')
+    train_data = np.load('./train.npy')
     # item_item_pairs =[]
     user_graph_matrix = gen_user_matrix(train_data)
     # edge_adj, edge_set, node_set = gen_dense_user_graph(train_data, 3)
@@ -365,8 +365,8 @@ if __name__ == 	'__main__':
 
     # pdb.set_trace()
     user_graph = user_graph_matrix
-    num_user = 36656
-    num_item = 76085
+    num_user = 32309
+    num_item = 66456
     # user_num = torch.zeros(num_user)
     user_num = torch.zeros(num_user)
 
@@ -397,7 +397,7 @@ if __name__ == 	'__main__':
             edge_list = [edge_list_i, edge_list_j]
             user_graph_dict[i] = edge_list
     # pdb.set_trace()
-    np.save('./user_graph_dict_cold_tik.npy',user_graph_dict,allow_pickle=True)
+    np.save('./user_graph_dict_tik.npy',user_graph_dict,allow_pickle=True)
     # i_edge_adj, i_edge_set, i_node_set = gen_item_graph(train_data)
     # np.save('./Data/u_edge_adj.npy', u_edge_adj)
     # np.save('./Data/u_edge_adj.npy', i_edge_adj)
