@@ -1,3 +1,5 @@
 # paper id:911
 
-# Run train_DualGNN.py to train the proposed model.
+# DualGNN: Dual Graph Neural Network for Micro-videoRecommendation
+
+## Run train_DualGNN.py
