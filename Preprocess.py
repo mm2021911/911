@@ -354,15 +354,7 @@ if __name__ == 	'__main__':
     train_data = np.load('./train.npy')
     # item_item_pairs =[]
     user_graph_matrix = gen_user_matrix(train_data)
-    # edge_adj, edge_set, node_set = gen_dense_user_graph(train_data, 3)
-    # item_matrix = gen_item_matrix(train_data)
-    # item_matrix = torch.load('./i_weight.pt')
-    # for i in range(len(item_matrix)):
-    #     print(i)
-    #     for j in range(i,len(item_matrix)):
-    #         if item_matrix[i][j] != 0:
-    #             item_item_pairs.append([i,j,item_matrix[i][j]])
-
+    #####################################################################generate user-user matrix
     # pdb.set_trace()
     user_graph = user_graph_matrix
     num_user = 32309
